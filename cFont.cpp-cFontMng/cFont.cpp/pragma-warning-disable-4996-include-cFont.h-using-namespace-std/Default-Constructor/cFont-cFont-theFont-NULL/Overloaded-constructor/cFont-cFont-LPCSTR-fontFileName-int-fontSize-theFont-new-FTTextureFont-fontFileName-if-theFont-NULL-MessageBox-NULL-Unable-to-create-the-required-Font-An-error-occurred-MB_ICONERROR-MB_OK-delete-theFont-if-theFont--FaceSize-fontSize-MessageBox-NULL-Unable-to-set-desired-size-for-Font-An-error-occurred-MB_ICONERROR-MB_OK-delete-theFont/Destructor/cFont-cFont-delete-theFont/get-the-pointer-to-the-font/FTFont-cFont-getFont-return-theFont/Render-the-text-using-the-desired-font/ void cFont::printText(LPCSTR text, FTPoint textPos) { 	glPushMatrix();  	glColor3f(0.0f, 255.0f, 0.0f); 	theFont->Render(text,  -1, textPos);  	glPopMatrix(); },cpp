@@ -1,0 +1,143 @@
+/*
+==========================================================================
+cFont.cpp
+==========================================================================
+*/
+#pragma warning ( disable : 4996 )
+#include "cFont.h"
+using namespace std;
+
+/*
+==========================================================================
+Default Constructor
+==========================================================================
+*/
+cFont::cFont()
+{
+	theFont = NULL;
+}
+/*
+==========================================================================
+Overloaded constructor
+==========================================================================
+*/
+cFont::cFont(LPCSTR fontFileName, int fontSize)
+{
+	theFont = new FTTextureFont(fontFileName);
+
+	if (theFont == NULL)
+	{
+		MessageBox(NULL, "Unable to create the required Font!", "An error occurred", MB_ICONERROR | MB_OK);
+		delete theFont;
+	}
+
+	if (!theFont->FaceSize(fontSize))
+	{
+		MessageBox(NULL, "Unable to set desired size for Font!", "An error occurred", MB_ICONERROR | MB_OK);
+		delete theFont;
+	}
+}
+
+/*
+==========================================================================
+Destructor
+==========================================================================
+*/
+cFont::~cFont()
+{
+	delete theFont;
+}
+/*
+==========================================================================
+get the pointer to the font
+==========================================================================
+*/
+FTFont* cFont::getFont()
+{
+	return theFont;
+}
+
+/*
+==========================================================================
+Render the text using the desired font
+==========================================================================
+*/
+void cFont::printText(LPCSTR text, FTPoint textPos)
+{
+	glPushMatrix();
+
+	glColor3f(0.0f, 255.0f, 0.0f);
+	theFont->Render(text,  -1, textPos);
+
+	glPopMatrix();
+}
+
+/*
+== == == == == == == == =
+cFontMgr.h
+- Header file for class definition - SPECIFICATION
+- Header file for the InputMgr class
+== == == == == == == == =
+*/
+
+#include "cFontMgr.h"
+
+cFontMgr* cFontMgr::pInstance = NULL;
+
+/*
+=================================================================================
+Singleton Design Pattern
+=================================================================================
+*/
+cFontMgr* cFontMgr::getInstance()
+{
+	if (pInstance == NULL)
+	{
+		pInstance = new cFontMgr();
+	}
+	return cFontMgr::pInstance;
+}
+
+/*
+=================================================================================
+Constructor
+=================================================================================
+*/
+cFontMgr::cFontMgr()
+{
+
+}
+
+cFontMgr::~cFontMgr()							// Destructor.
+{
+	deleteFont();
+}
+void cFontMgr::addFont(LPCSTR fontName, LPCSTR fileName, int fontSize)  // add font to the Font collection
+{
+	if (!getFont(fontName))
+	{
+		cFont * newFont = new cFont(fileName, fontSize);
+		gameFonts.insert(make_pair(fontName, newFont));
+	}
+}
+
+cFont* cFontMgr::getFont(LPCSTR fontName)				// return the font for use
+{
+	map<LPCSTR, cFont*>::iterator theFont = gameFonts.find(fontName);
+	if (theFont != gameFonts.end())
+	{
+		return theFont->second;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+void cFontMgr::deleteFont()								// delete font.
+{
+	for (map<LPCSTR, cFont*>::const_iterator theFont = gameFonts.begin(); theFont != gameFonts.end(); theFont++)
+	{
+		delete theFont->second;
+	}
+}
