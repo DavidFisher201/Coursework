@@ -1,0 +1,110 @@
+/*
+================
+cBkGround.h
+- Header file for class definition - SPECIFICATION
+- Header file for the Background class which is a child of cSprite class
+=================
+*/
+#ifndef _CBKGROUND_H
+#define _CBKGROUND_H
+#include "cSprite.h"
+
+class cBkGround : public cSprite
+{
+public:
+	void render();		// Default render function
+	void update(float deltaTime);		// Update method
+};
+#endif
+
+
+/*
+=================
+cBullet.h
+- Header file for class definition - SPECIFICATION
+- Header file for the Bullet class which is a child of cSprite class
+=================
+*/
+#ifndef _CBULLET_H
+#define _CBULLET_H
+#include "cSprite.h"
+
+
+class cBullet : public cSprite
+{
+private:
+	glm::vec2 bulletVelocity = glm::vec2(0.0f, 0.0f);
+
+public:
+	//cBullet(vector<cTexture*> tileTextList)
+
+	void render();		// Default render function
+	void update(float deltaTime);		// Bullet update method
+	void setBulletVelocity(glm::vec2 bulletVel);   // Sets the velocity for the Bullet
+	glm::vec2 getBulletVelocity();				 // Gets the Bullet velocity
+	void renderCollisionBox();				// Use this function to show the collision box
+};
+#endif
+
+/*
+==========================================================================
+cFont.h
+==========================================================================
+*/
+
+#ifndef _CFONT_H
+#define _CFONT_H
+
+// OpenGL Headers
+#include "GameConstants.h"
+
+using namespace std;
+
+class cFont
+{
+private:
+	FTFont* theFont;
+
+
+public:
+	cFont();
+	cFont(LPCSTR fontFileName, int fontSize);
+	~cFont();
+	FTFont* getFont();
+	void printText(LPCSTR text, FTPoint textPos);
+
+};
+#endif
+
+/*
+== == == == == == == == =
+cFontMgr.h
+- Header file for class definition - SPECIFICATION
+- Header file for the InputMgr class
+== == == == == == == == =
+*/
+#ifndef _CFONTMGR_H
+#define _CFONTMGR_H
+#include "GameConstants.h"
+#include "cFont.h"
+
+class cFontMgr
+{
+private:
+
+	static cFontMgr* pInstance;
+	map<LPCSTR, cFont*> gameFonts;
+
+public:
+	static cFontMgr* getInstance();
+
+	cFontMgr();								// Constructor
+	~cFontMgr();							// Destructor.
+	void addFont(LPCSTR fontName, LPCSTR fileName, int fontSize);  // add font to the Font collection
+	cFont* getFont(LPCSTR fontName);				// return the font for use
+	void deleteFont();								// delete font.
+
+};
+
+#endif
+
